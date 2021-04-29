@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({
     success: false,
     message: "error occurred, see the error message for more details",
-    errMessage: err.Message,
+    errorMessage: err.Message,
   });
 });
 
