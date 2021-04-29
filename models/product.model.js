@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-require("mongoose-type-url");
+// require("mongoose-type-url");
 
 const ProductSchema = new mongoose.Schema(
   {
     image: {
-      type: mongoose.SchemaTypes.Url,
+      type: String,
       required: "Product image must be added",
     },
     name: {
