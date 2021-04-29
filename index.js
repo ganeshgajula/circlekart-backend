@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 const initializeDbConnection = require("./db/db.connect");
 const products = require("./routes/products.router");
@@ -43,5 +44,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(process.env.PORT || port, () => {
-  console.log(`server is running at port ${PORT}`);
+  console.log(`server is running at port ${port}`);
 });
