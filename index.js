@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const initializeDbConnection = require("./db/db.connect");
+const products = require("./routes/products.router");
 
 const app = express();
 
@@ -11,6 +12,8 @@ app.use(cors());
 const port = 3000;
 
 initializeDbConnection();
+
+app.use("/products", products);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Circlekart");
