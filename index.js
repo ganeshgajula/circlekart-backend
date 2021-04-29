@@ -1,10 +1,19 @@
+require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+const initializeDbConnection = require("./db/db.connect");
+
 const app = express();
 
-const PORT = 3000;
+app.use(bodyParser.json());
+app.use(cors());
+
+const port = 3000;
+
+initializeDbConnection();
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the world of backend with express!!");
+  res.send("Welcome to Circlekart");
 });
 
 /**
@@ -30,6 +39,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(process.env.PORT || PORT, () => {
+app.listen(process.env.PORT || port, () => {
   console.log(`server is running at port ${PORT}`);
 });
