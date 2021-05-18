@@ -78,6 +78,7 @@ router.param("email", async (req, res, next, id) => {
       success: false,
       message:
         "Couldn't find user with this email, check error message for more details",
+      errorMessage: error.message,
     });
   }
 });
