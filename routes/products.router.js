@@ -81,10 +81,10 @@ router
       const updatedProduct = await product.save();
       res.json({ success: true, updatedProduct });
     } catch (error) {
-      res.status(400).json({
+      res.status(500).json({
         success: false,
         message:
-          "Looks like something broke, kindly look into error message for more details",
+          "Could not update product details, kindly look into error message for more details",
         errorMessage: error.message,
       });
     }
