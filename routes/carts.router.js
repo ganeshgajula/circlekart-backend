@@ -25,7 +25,7 @@ router.param("userId", async (req, res, next, id) => {
 
 router.param("userId", async (req, res, next, id) => {
   try {
-    const cart = await Cart.findOne({ userId: id });
+    let cart = await Cart.findOne({ userId: id });
 
     if (!cart) {
       cart = new Cart({ userId: id, products: [] });
@@ -64,7 +64,7 @@ router
       let { cart } = req;
       const productUpdates = req.body;
 
-      const isProductAlreadyAddedInCart = cart.product.find(
+      const isProductAlreadyAddedInCart = cart.products.find(
         (product) => product.productId == productUpdates._id
       );
 
