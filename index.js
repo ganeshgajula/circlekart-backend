@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const products = require("./routes/products.router");
 const users = require("./routes/users.router");
+const carts = require("./routes/carts.router");
 const initializeDbConnection = require("./db/db.connect");
 
 const app = express();
@@ -17,6 +18,7 @@ initializeDbConnection();
 
 app.use("/products", products);
 app.use("/users", users);
+app.use("/carts", carts);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Circlekart");
