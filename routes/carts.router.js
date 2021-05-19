@@ -48,8 +48,14 @@ router
   .get(async (req, res) => {
     try {
       let { cart } = req;
+
       cart = await cart.populate({ path: "products.productId" }).execPopulate();
-      res.status(200).json({ success: true, cart });
+
+      const activeProducts = cart.products.filter(
+        (product) => product.isActive
+      );
+
+      res.status(200).json({ success: true, cart: activeProducts });
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -77,6 +83,7 @@ router
         : cart.products.push({
             productId: productUpdates._id,
             quantity: 1,
+            isActive: true,
           });
 
       let updatedCart = await cart.save();
@@ -84,7 +91,11 @@ router
         .populate({ path: "products.productId" })
         .execPopulate();
 
-      res.status(201).json({ success: true, updatedCart });
+      const activeProducts = updatedCart.products.filter(
+        (product) => product.isActive
+      );
+
+      res.status(201).json({ success: true, cart: activeProducts });
     } catch (error) {
       res.status(500).json({
         success: false,
