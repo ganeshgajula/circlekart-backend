@@ -81,7 +81,7 @@ router
       isProductAlreadyAddedInWishlist
         ? wishlist.products.map((product) => {
             if (product.productId == productUpdates._id) {
-              product = extend(product, productUpdates);
+              product.isActive = !product.isActive;
             }
           })
         : wishlist.products.push({
