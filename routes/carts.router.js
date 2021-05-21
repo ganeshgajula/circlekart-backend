@@ -11,7 +11,7 @@ router.param("userId", async (req, res, next, id) => {
     if (!user) {
       res.status(404).json({ success: false, message: "user not found" });
     }
-
+    3;
     req.user = user;
     next();
   } catch (error) {
@@ -91,11 +91,11 @@ router
         .populate({ path: "products.productId" })
         .execPopulate();
 
-      const activeProducts = updatedCart.products.filter(
+      const activeProductsInCart = updatedCart.products.filter(
         (product) => product.isActive
       );
 
-      res.status(201).json({ success: true, cart: activeProducts });
+      res.status(201).json({ success: true, cart: activeProductsInCart });
     } catch (error) {
       res.status(500).json({
         success: false,
