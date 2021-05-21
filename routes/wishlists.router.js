@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { extend } = require("lodash");
 const { Wishlist } = require("../models/wishlist.model");
 const { User } = require("../models/user.model");
 
@@ -98,7 +97,7 @@ router
         (product) => product.isActive
       );
 
-      res.status(201).json({ success: true, wishlist: activeProducts });
+      res.status(200).json({ success: true, wishlist: activeProducts });
     } catch (error) {
       res.status(500).json({
         success: false,
