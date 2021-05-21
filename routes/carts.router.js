@@ -95,7 +95,7 @@ router
         (product) => product.isActive
       );
 
-      res.status(201).json({ success: true, cart: activeProductsInCart });
+      res.status(200).json({ success: true, cart: activeProductsInCart });
     } catch (error) {
       res.status(500).json({
         success: false,
