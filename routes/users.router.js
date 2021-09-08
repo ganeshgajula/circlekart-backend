@@ -1,9 +1,10 @@
+const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
 const { extend } = require("lodash");
 const { User } = require("../models/user.model");
 
-router.route("/").post(async (req, res) => {
+router.route("/signup").post(async (req, res) => {
   try {
     const userData = req.body;
 
@@ -11,8 +12,10 @@ router.route("/").post(async (req, res) => {
 
     if (!user) {
       const newUser = new User(userData);
+      const salt = await bcrypt.genSalt(10);
+      newUser.password = await bcrypt.hash(newUser.password, salt);
       const savedUser = await newUser.save();
-      res.status(201).json({ success: true, savedUser });
+      return res.status(201).json({ success: true, savedUser });
     }
     return res.status(409).json({
       success: false,
@@ -29,13 +32,14 @@ router.route("/").post(async (req, res) => {
   }
 });
 
-router.route("/authenticate").post(async (req, res) => {
+router.route("/login").post(async (req, res) => {
   try {
     const email = req.get("email");
     const password = req.get("password");
     const user = await User.findOne({ email });
 
-    if (user && user.password === password) {
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (user && validPassword) {
       return res.status(200).json({
         success: true,
         userDetails: { userId: user._id, firstname: user.firstname },
