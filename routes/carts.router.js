@@ -12,7 +12,7 @@ router.param("userId", async (req, res, next, id) => {
       res.status(404).json({ success: false, message: "user not found" });
     }
 
-    req.user = user;
+    req.userDetails = user;
     next();
   } catch (error) {
     res.status(500).json({
