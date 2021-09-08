@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
 const { extend } = require("lodash");
@@ -40,9 +41,12 @@ router.route("/login").post(async (req, res) => {
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (user && validPassword) {
+      const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+        expiresIn: "24h",
+      });
       return res.status(200).json({
         success: true,
-        userDetails: { userId: user._id, firstname: user.firstname },
+        userDetails: { userId: user._id, firstname: user.firstname, token },
       });
     } else if (!user) {
       return res.status(401).json({
