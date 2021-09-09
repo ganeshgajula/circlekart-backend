@@ -21,7 +21,7 @@ router.route("/signup").post(async (req, res) => {
     return res.status(409).json({
       success: false,
       message:
-        "You already have an account with this email,kindly login with the password",
+        "User already registered with entered email. Kindly login or create a new account.",
     });
   } catch (error) {
     res.status(500).json({
@@ -39,25 +39,27 @@ router.route("/login").post(async (req, res) => {
     const password = req.get("password");
     const user = await User.findOne({ email });
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (user && validPassword) {
-      const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-        expiresIn: "24h",
-      });
-      return res.status(200).json({
-        success: true,
-        userDetails: { userId: user._id, firstname: user.firstname, token },
-      });
-    } else if (!user) {
+    if (user) {
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (validPassword) {
+        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+          expiresIn: "24h",
+        });
+        return res.status(200).json({
+          success: true,
+          userDetails: { userId: user._id, firstname: user.firstname, token },
+        });
+      }
       return res.status(401).json({
         success: false,
         message:
-          "This email is not registered with us. Kindly, go to signup page and create a new account",
+          "Incorrect user credentials, kindly login with correct credentials",
       });
     }
     return res.status(401).json({
       success: false,
-      message: "Password is incorrect, please enter the correct password",
+      message:
+        "This email is not registered with us. Kindly, visit signup page and create a new account",
     });
   } catch (error) {
     res.status(500).json({
