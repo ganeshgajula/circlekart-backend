@@ -17,7 +17,7 @@ const port = 4000;
 initializeDbConnection();
 
 const authVerify = (req, res, next) => {
-  const token = req.headers.authorization;
+  const token = req.headers.authorization?.split(" ")[1];
   console.log({ token });
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -58,7 +58,7 @@ app.use((req, res) => {
  * Note: Do not move.
  */
 app.use((err, req, res, next) => {
-  console.error(error.stack);
+  console.error(err.stack);
   res.status(500).json({
     success: false,
     message: "error occurred, see the error message for more details",
