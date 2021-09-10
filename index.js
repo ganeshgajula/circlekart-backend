@@ -7,6 +7,9 @@ const users = require("./routes/users.router");
 const carts = require("./routes/carts.router");
 const wishlists = require("./routes/wishlists.router");
 const initializeDbConnection = require("./db/db.connect");
+const { routeHandler } = require("./middlewares/routeHandler");
+const { errorHandler } = require("./middlewares/errorHandler");
+const { authVerify } = require("./middlewares/authVerify");
 
 const app = express();
 app.use(express.json());
@@ -16,28 +19,10 @@ const port = 4000;
 
 initializeDbConnection();
 
-const authVerify = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  console.log({ token });
-  try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    console.log({ decoded });
-    req.user = { userId: decoded.userId };
-    return next();
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized access, please add the correct token.",
-      errorMessage: error.message,
-    });
-  }
-};
-
 app.use("/products", products);
 app.use("/users", users);
-app.use(authVerify);
-app.use("/carts", carts);
-app.use("/wishlists", wishlists);
+app.use("/carts", authVerify, carts);
+app.use("/wishlists", authVerify, wishlists);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Circlekart");
@@ -47,25 +32,13 @@ app.get("/", (req, res) => {
  * 404 Route Handler
  * Note: Do not move. This should be the last route.
  */
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "route not found on server, please check.",
-  });
-});
+app.use(routeHandler);
 
 /**
  * Error Handler
  * Note: Do not move.
  */
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: "error occurred, see the error message for more details",
-    errorMessage: err.Message,
-  });
-});
+app.use(errorHandler);
 
 app.listen(process.env.PORT || port, () => {
   console.log(`server is running at port ${port}`);
