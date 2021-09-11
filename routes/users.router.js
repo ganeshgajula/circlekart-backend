@@ -47,7 +47,11 @@ router.route("/login").post(async (req, res) => {
         });
         return res.status(200).json({
           success: true,
-          userDetails: { userId: user._id, firstname: user.firstname, token },
+          userDetails: {
+            userId: user._id,
+            firstname: user.firstname,
+            token: `Bearer ${token}`,
+          },
         });
       }
       return res.status(401).json({
