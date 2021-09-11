@@ -6,25 +6,14 @@ const { Cart } = require("../models/cart.model");
 
 router.param("userId", async (req, res, next, id) => {
   try {
-    const user = await User.findById(id);
+    const { user } = req;
 
     if (!user) {
-      res.status(404).json({ success: false, message: "user not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
     }
 
-    req.userDetails = user;
-    next();
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message:
-        "Couldn't find user, please check the error message for more details",
-    });
-  }
-});
-
-router.param("userId", async (req, res, next, id) => {
-  try {
     let cart = await Cart.findOne({ userId: id });
 
     if (!cart) {
@@ -39,6 +28,7 @@ router.param("userId", async (req, res, next, id) => {
       succcess: false,
       message:
         "Couldn't load user's cart, kindly check the error message for more details",
+      errorMessage: error.message,
     });
   }
 });

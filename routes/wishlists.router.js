@@ -5,26 +5,15 @@ const { User } = require("../models/user.model");
 
 router.param("userId", async (req, res, next, id) => {
   try {
-    const user = await User.findById(id);
+    const { user } = req;
 
+    console.log({ user });
     if (!user) {
-      res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
     }
 
-    req.userDetails = user;
-    next();
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message:
-        "Couldn't find user, kindly check the error message for more details",
-      errorMessage: error.message,
-    });
-  }
-});
-
-router.param("userId", async (req, res, next, id) => {
-  try {
     let wishlist = await Wishlist.findOne({ userId: id });
 
     if (!wishlist) {
