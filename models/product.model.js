@@ -11,6 +11,10 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: "Product name must be mentioned",
     },
+    author: {
+      type: String,
+      required: "Author name must be mentioned.",
+    },
     price: {
       type: Number,
       required: "Product price must be mentioned",
