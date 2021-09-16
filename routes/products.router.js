@@ -38,7 +38,7 @@ router.param("productId", async (req, res, next, id) => {
     const matchedProduct = await Product.findById(id);
 
     if (!matchedProduct) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "The product you are trying to access is not available.",
       });
