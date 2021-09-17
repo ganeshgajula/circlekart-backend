@@ -4,6 +4,7 @@ const express = require("express");
 const router = express.Router();
 const { extend } = require("lodash");
 const { User } = require("../models/user.model");
+const { route } = require("./products.router");
 
 router.route("/signup").post(async (req, res) => {
   try {
@@ -50,6 +51,7 @@ router.route("/login").post(async (req, res) => {
           userDetails: {
             userId: user._id,
             firstname: user.firstname,
+            lastname: user.lastname,
             token: `Bearer ${token}`,
           },
         });
@@ -74,14 +76,14 @@ router.route("/login").post(async (req, res) => {
   }
 });
 
-router.param("email", async (req, res, next, id) => {
+router.param("userId", async (req, res, next, id) => {
   try {
-    const user = await User.findOne({ email: id });
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not registered with this email",
+        message: "User not found",
       });
     }
 
@@ -90,28 +92,41 @@ router.param("email", async (req, res, next, id) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message:
-        "Couldn't find user with this email, check error message for more details",
+      message: "Couldn't find user, check error message for more details",
       errorMessage: error.message,
     });
   }
 });
 
-router.route("/:email").post(async (req, res) => {
-  try {
-    let { user } = req;
-    const userUpdates = req.body;
-    user = extend(user, userUpdates);
-    const updatedUserDetails = await user.save();
-    res.json({ success: true, updatedUserDetails });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message:
-        "Couldn't update user details, kindly check the error message for more details",
-      errorMessage: error.message,
-    });
-  }
-});
+router
+  .route("/:userId")
+  .get(async (req, res) => {
+    try {
+      let { user } = req;
+      res.json({ success: true, user });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Couldn't get user details",
+        errorMessage: error.message,
+      });
+    }
+  })
+  .post(async (req, res) => {
+    try {
+      let { user } = req;
+      const userUpdates = req.body;
+      user = extend(user, userUpdates);
+      const updatedUserDetails = await user.save();
+      res.json({ success: true, updatedUserDetails });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message:
+          "Couldn't update user details, kindly check the error message for more details",
+        errorMessage: error.message,
+      });
+    }
+  });
 
 module.exports = router;
