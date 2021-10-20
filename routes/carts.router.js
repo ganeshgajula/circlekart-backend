@@ -5,6 +5,7 @@ const { User } = require("../models/user.model");
 const { Cart } = require("../models/cart.model");
 const Razorpay = require("razorpay");
 const { nanoid } = require("nanoid");
+const crypto = require("crypto");
 
 router.param("userId", async (req, res, next, id) => {
   try {
@@ -130,9 +131,17 @@ router.route("/checkout").post(async (req, res) => {
 
 router.route("/verifypayment").post(async (req, res) => {
   try {
-    console.log(req.body);
+    const secret = process.env.WEBHOOK_SECRET;
+    const shasum = crypto.createHmac("sha256", secret);
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest("hex");
 
-    res.json({ status: "ok" });
+    if (digest === req.headers["x-razorpay-signature"]) {
+      console.log("Legit request");
+      res.json({ status: "ok", success: true, message: "verfied payment" });
+    } else {
+      res.status(401).json({ success: false, message: "unauthorized access" });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
