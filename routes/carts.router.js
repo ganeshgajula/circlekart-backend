@@ -99,6 +99,22 @@ router
     }
   });
 
+router.route("/:userId/cart/reset").get(async (req, res) => {
+  try {
+    let { cart } = req;
+    cart.products = [];
+
+    res.status(200).json({ success: true, cart });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:
+        "Couldn't reset cart, kindly check the error message for more details",
+      errorMessage: error.message,
+    });
+  }
+});
+
 router.route("/checkout").post(async (req, res) => {
   try {
     const { totalAmount } = req.body;
@@ -129,26 +145,26 @@ router.route("/checkout").post(async (req, res) => {
   }
 });
 
-router.route("/verifypayment").post(async (req, res) => {
-  try {
-    const secret = process.env.WEBHOOK_SECRET;
-    const shasum = crypto.createHmac("sha256", secret);
-    shasum.update(JSON.stringify(req.body));
-    const digest = shasum.digest("hex");
+// router.route("/verifypayment").post(async (req, res) => {
+//   try {
+//     const secret = process.env.WEBHOOK_SECRET;
+//     const shasum = crypto.createHmac("sha256", secret);
+//     shasum.update(JSON.stringify(req.body));
+//     const digest = shasum.digest("hex");
 
-    if (digest === req.headers["x-razorpay-signature"]) {
-      console.log("Legit request");
-      res.json({ status: "ok", success: true, message: "verfied payment" });
-    } else {
-      res.status(401).json({ success: false, message: "unauthorized access" });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Couldn't verify transaction",
-      errorMessage: error.message,
-    });
-  }
-});
+//     if (digest === req.headers["x-razorpay-signature"]) {
+//       console.log("Legit request");
+//       res.json({ status: "ok", success: true, message: "verfied payment" });
+//     } else {
+//       res.status(401).json({ success: false, message: "unauthorized access" });
+//     }
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Couldn't verify transaction",
+//       errorMessage: error.message,
+//     });
+//   }
+// });
 
 module.exports = router;
