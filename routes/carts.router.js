@@ -101,7 +101,7 @@ router
 
 router.route("/checkout").post(async (req, res) => {
   try {
-    const { orderInfo } = req.body;
+    const { totalAmount } = req.body;
 
     const instance = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
@@ -109,7 +109,7 @@ router.route("/checkout").post(async (req, res) => {
     });
 
     const options = {
-      amount: orderInfo.totalAmount * 100,
+      amount: totalAmount * 100,
       currency: "INR",
       receipt: nanoid(),
       payment_capture: 1,
