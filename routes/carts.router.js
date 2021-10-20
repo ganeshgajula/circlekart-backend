@@ -128,4 +128,18 @@ router.route("/checkout").post(async (req, res) => {
   }
 });
 
+router.route("/verifypayment").post(async (req, res) => {
+  try {
+    console.log(req.body);
+
+    res.json({ status: "ok" });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Couldn't verify transaction",
+      errorMessage: error.message,
+    });
+  }
+});
+
 module.exports = router;
