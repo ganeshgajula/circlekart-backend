@@ -99,10 +99,13 @@ router
     }
   });
 
-router.route("/:userId/cart/reset").get(async (req, res) => {
+router.route("/:userId/cart/reset").post(async (req, res) => {
   try {
     let { cart } = req;
-    cart.products = [];
+    const cartUpdates = req.body;
+
+    cart = extend(cart, cartUpdates);
+    await cart.save();
 
     res.status(200).json({ success: true, cart });
   } catch (error) {
@@ -144,27 +147,5 @@ router.route("/checkout").post(async (req, res) => {
     });
   }
 });
-
-// router.route("/verifypayment").post(async (req, res) => {
-//   try {
-//     const secret = process.env.WEBHOOK_SECRET;
-//     const shasum = crypto.createHmac("sha256", secret);
-//     shasum.update(JSON.stringify(req.body));
-//     const digest = shasum.digest("hex");
-
-//     if (digest === req.headers["x-razorpay-signature"]) {
-//       console.log("Legit request");
-//       res.json({ status: "ok", success: true, message: "verfied payment" });
-//     } else {
-//       res.status(401).json({ success: false, message: "unauthorized access" });
-//     }
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Couldn't verify transaction",
-//       errorMessage: error.message,
-//     });
-//   }
-// });
 
 module.exports = router;
